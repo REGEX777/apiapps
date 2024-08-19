@@ -1,0 +1,13 @@
+<%- include('partials/header', { title: 'Home' }) %>
+
+<div class="bg-white p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">Welcome to Fun APIs!</h2>
+    <p class="mb-6">Explore different fun APIs with this simple web app.</p>
+    <ul class="list-none space-y-4">
+        <li><a href="/joke" class="block p-4 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">Get a Random Joke</a></li>
+        <li><a href="/weather" class="block p-4 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">Check the Weather</a></li>
+        <li><a href="/cat-facts" class="block p-4 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">Get a Random Cat Fact</a></li>
+    </ul>
+</div>
+
+<%- include('partials/footer') %>

@@ -25,11 +25,7 @@ app.get('/joke', async (req, res) => {
 });
 
 app.get('/weather', async (req, res) => {
-    const city = req.query.city;
-    if (!city) {
-        return res.render('error', { message: 'Please provide a city name' });
-    }
-
+    const city = req.query.city || 'New York';
     try {
         const weatherResponse = await axios.get(`${BASE_URL}/weather`, {
             params: {
@@ -50,7 +46,8 @@ app.get('/weather', async (req, res) => {
 
         const airQualityResponse = await axios.get(`${BASE_URL}/air_pollution`, {
             params: {
-                q: city,
+                lat: weatherResponse.data.coord.lat,
+                lon: weatherResponse.data.coord.lon,
                 appid: OPENWEATHERMAP_API_KEY
             }
         });
@@ -61,10 +58,22 @@ app.get('/weather', async (req, res) => {
             airQuality: airQualityResponse.data
         });
     } catch (error) {
-        console.error('Error fetching data:', error);
-        res.render('error', { message: 'Failed to fetch data' });
+        console.error('Error fetching weather data:', error);
+        res.render('error', { message: 'Failed to fetch weather data' });
     }
 });
+
+
+app.get('/cat-facts', async (req, res) => {
+    try {
+        const catFactsResponse = await axios.get('https://catfact.ninja/fact');
+        res.render('cat-facts', { catFact: catFactsResponse.data.fact });
+    } catch (error) {
+        console.error('Error fetching cat fact:', error);
+        res.render('error', { message: 'Failed to fetch cat fact' });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
