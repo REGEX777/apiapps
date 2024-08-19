@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
@@ -6,9 +5,10 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 
-// Load API keys from environment variables
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+const NASA_API_KEY = process.env.NASA_API_KEY;
+const NASA_URL = 'https://api.nasa.gov/planetary';
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -19,7 +19,6 @@ app.get('/joke', async (req, res) => {
         const jokeResponse = await axios.get('https://official-joke-api.appspot.com/random_joke');
         res.render('joke', { joke: jokeResponse.data });
     } catch (error) {
-        console.error('Error fetching joke:', error);
         res.render('error', { message: 'Failed to fetch joke' });
     }
 });
@@ -58,18 +57,15 @@ app.get('/weather', async (req, res) => {
             airQuality: airQualityResponse.data
         });
     } catch (error) {
-        console.error('Error fetching weather data:', error);
         res.render('error', { message: 'Failed to fetch weather data' });
     }
 });
-
 
 app.get('/cat-facts', async (req, res) => {
     try {
         const catFactsResponse = await axios.get('https://catfact.ninja/fact');
         res.render('cat-facts', { catFact: catFactsResponse.data.fact });
     } catch (error) {
-        console.error('Error fetching cat fact:', error);
         res.render('error', { message: 'Failed to fetch cat fact' });
     }
 });
@@ -84,11 +80,23 @@ app.get('/dog-fact', async (req, res) => {
             imageUrl: imageResponse.data.message
         });
     } catch (error) {
-        console.error('Error fetching dog fact or image:', error);
         res.render('error', { message: 'Failed to fetch dog fact or image' });
     }
 });
 
+app.get('/nasa', async (req, res) => {
+    try {
+        const apodResponse = await axios.get(`${NASA_URL}/apod`, {
+            params: {
+                api_key: NASA_API_KEY
+            }
+        });
+
+        res.render('nasa', { apod: apodResponse.data });
+    } catch (error) {
+        res.render('error', { message: 'Failed to fetch NASA data' });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
