@@ -74,6 +74,21 @@ app.get('/cat-facts', async (req, res) => {
     }
 });
 
+app.get('/dog-fact', async (req, res) => {
+    try {
+        const factResponse = await axios.get('https://dog-api.kinduff.com/api/facts');
+        const imageResponse = await axios.get('https://dog.ceo/api/breeds/image/random');
+
+        res.render('dog-fact', {
+            fact: factResponse.data.facts[0],
+            imageUrl: imageResponse.data.message
+        });
+    } catch (error) {
+        console.error('Error fetching dog fact or image:', error);
+        res.render('error', { message: 'Failed to fetch dog fact or image' });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
