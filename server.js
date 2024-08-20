@@ -7,6 +7,8 @@ const port = 3000;
 
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const NASA_API_KEY = process.env.NASA_API_KEY;
+const NEWS_API_KEY = process.env.NEWS_API_KEY;
+const COINGECKO_API_BASE_URL = 'https://api.coingecko.com/api/v3';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 app.set('view engine', 'ejs');
@@ -137,6 +139,46 @@ app.get('/pokemon', async (req, res) => {
     }
 });
 
+app.get('/crypto', async (req, res) => {
+    try {
+        const cryptoResponse = await axios.get(`${COINGECKO_API_BASE_URL}/coins/markets`, {
+            params: {
+                vs_currency: 'usd',
+                order: 'market_cap_desc',
+                per_page: 5,
+                page: 1,
+                sparkline: false
+            }
+        });
+
+        res.render('crypto', {
+            cryptos: cryptoResponse.data
+        });
+    } catch (error) {
+        console.error('Error fetching cryptocurrency data:', error);
+        res.render('error', { message: 'Failed to fetch cryptocurrency data' });
+    }
+});
+
+app.get('/news', async (req, res) => {
+    const query = req.query.q || 'technology';
+    try {
+        const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
+            params: {
+                q: query,
+                apiKey: NEWS_API_KEY
+            }
+        });
+
+        res.render('news', {
+            articles: newsResponse.data.articles,
+            query: query
+        });
+    } catch (error) {
+        console.error('Error fetching news:', error);
+        res.render('error', { message: 'Failed to fetch news' });
+    }
+});
 
 app.get('/nasa-photo', async (req, res) => {
     try {
