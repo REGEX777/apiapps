@@ -114,7 +114,20 @@ app.get('/space', async (req, res) => {
     }
 });
 
-
+app.get('/pokemon', async (req, res) => {
+    const pokemon = req.query.name || 'pikachu';
+    try {
+        const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`);
+        res.render('pokemon', {
+            name: pokemonResponse.data.name,
+            imageUrl: pokemonResponse.data.sprites.front_default,
+            abilities: pokemonResponse.data.abilities
+        });
+    } catch (error) {
+        console.error('Error fetching Pokémon data:', error);
+        res.render('error', { message: 'Failed to fetch Pokémon data' });
+    }
+});
 
 app.get('/nasa-photo', async (req, res) => {
     try {
