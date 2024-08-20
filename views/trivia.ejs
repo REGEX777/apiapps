@@ -1,0 +1,28 @@
+<% layout('layout', { title: 'Random Dog Fact' }) %>
+<div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">Trivia Game</h1>
+    <form id="trivia-form">
+        <% questions.forEach((question, index) => { %>
+        <div class="mb-6">
+            <p class="font-bold"><%= question.question %></p>
+            <% question.incorrect_answers.concat([question.correct_answer]).sort().forEach(answer => { %>
+            <div class="mt-2">
+                <label>
+                    <input type="radio" name="q<%= index %>" value="<%= answer %>" required>
+                    <%= answer %>
+                </label>
+            </div>
+            <% }) %>
+        </div>
+        <% }) %>
+        <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg">Submit</button>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById('trivia-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        alert('Trivia submitted! Let\'s see how you did!');
+    });
+</script>

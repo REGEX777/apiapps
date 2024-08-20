@@ -160,6 +160,21 @@ app.get('/crypto', async (req, res) => {
     }
 });
 
+app.get('/trivia', async (req, res) => {
+    try {
+        const triviaResponse = await axios.get('https://opentdb.com/api.php?amount=10&type=multiple');
+
+        res.render('trivia', {
+            questions: triviaResponse.data.results
+        });
+    } catch (error) {
+        console.error('Error fetching trivia questions:', error);
+        res.render('error', { message: 'Failed to fetch trivia questions' });
+    }
+});
+
+
+
 app.get('/news', async (req, res) => {
     const query = req.query.q || 'technology';
     try {
