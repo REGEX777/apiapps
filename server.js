@@ -96,6 +96,25 @@ app.get('/quote', async (req, res) => {
     }
 });
 
+app.get('/space', async (req, res) => {
+    try {
+        const marsWeather = await axios.get(`https://api.nasa.gov/insight_weather/?api_key=${NASA_API_KEY}&feedtype=json&ver=1.0`);
+        const neos = await axios.get(`https://api.nasa.gov/neo/rest/v1/feed/today?detailed=true&api_key=${NASA_API_KEY}`);
+        const apod = await axios.get(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
+        const spaceMissions = await axios.get(`https://launchlibrary.net/1.4/launch/next/10`);
+
+        res.render('dashboard', {
+            marsWeather: marsWeather.data,
+            neos: neos.data.near_earth_objects,
+            apod: apod.data,
+            spaceMissions: spaceMissions.data.launches
+        });
+    } catch (error) {
+        res.render('error', { message: 'Failed to fetch data' });
+    }
+});
+
+
 
 app.get('/nasa-photo', async (req, res) => {
     try {

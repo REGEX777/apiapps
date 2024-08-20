@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
+    <div class="container mx-auto p-8">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-7xl mx-auto">
+            <h1 class="text-4xl font-extrabold text-center mb-8">Space Mission Dashboard</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- mars weathr section -->
+                <div class="bg-gray-700 p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">Mars Weather</h2>
+                    <p>Sol: <%= marsWeather.sol_keys[0] %></p>
+                    <p>Temperature: <%= marsWeather[sol_keys[0]].AT.av %>°C</p>
+                    <p>Wind Speed: <%= marsWeather[sol_keys[0]].HWS.av %> m/s</p>
+                    <p>Pressure: <%= marsWeather[sol_keys[0]].PRE.av %> Pa</p>
+                </div>
+
+                <!-- Objects near earth section -->
+                <div class="bg-gray-700 p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">Near-Earth Objects</h2>
+                    <% neos.forEach(neo => { %>
+                        <div class="mb-4">
+                            <p>Name: <%= neo.name %></p>
+                            <p>Hazardous: <%= neo.is_potentially_hazardous_asteroid ? 'Yes' : 'No' %></p>
+                            <p>Distance: <%= neo.close_approach_data[0].miss_distance.kilometers %> km</p>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- APOD section -->
+                <div class="bg-gray-700 p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">Astronomy Picture of the Day</h2>
+                    <img src="<%= apod.url %>" alt="APOD" class="w-full h-auto rounded mb-4">
+                    <p><%= apod.title %></p>
+                    <p><%= apod.explanation %></p>
+                </div>
+
+                <!-- space missions Section -->
+                <div class="bg-gray-700 p-6 rounded-lg shadow md:col-span-2">
+                    <h2 class="text-2xl font-bold mb-4">Upcoming Space Missions</h2>
+                    <% spaceMissions.forEach(mission => { %>
+                        <div class="mb-4">
+                            <p>Name: <%= mission.name %></p>
+                            <p>Window Start: <%= mission.windowstart %></p>
+                            <p>Location: <%= mission.location.name %></p>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
