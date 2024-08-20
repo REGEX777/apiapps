@@ -87,6 +87,16 @@ app.get('/dog-fact', async (req, res) => {
     }
 });
 
+app.get('/quote', async (req, res) => {
+    try {
+        const quoteResponse = await axios.get('https://api.quotable.io/random');
+        res.render('quote', { quote: quoteResponse.data });
+    } catch (error) {
+        res.render('error', { message: 'Failed to fetch quote' });
+    }
+});
+
+
 app.get('/nasa-photo', async (req, res) => {
     try {
         const nasaResponse = await axios.get('https://api.nasa.gov/planetary/apod', {
