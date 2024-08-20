@@ -8,4 +8,29 @@
             <li><%= ability.ability.name %></li>
         <% }); %>
     </ul>
+
+    <h2 class="text-xl font-semibold mt-4">Evolution Chain</h2>
+    <ul class="list-disc list-inside mt-2">
+        <% let current = evolutionChain; while (current) { %>
+            <li><%= current.species.name %></li>
+            <% current = current.evolves_to[0]; %>
+        <% } %>
+    </ul>
+
+    <h2 class="text-xl font-semibold mt-4">Type Matchups</h2>
+    <div class="mt-2">
+        <strong>Double Damage To:</strong>
+        <ul class="list-disc list-inside">
+            <% typeMatchups.double_damage_to.forEach(type => { %>
+                <li><%= type.name %></li>
+            <% }); %>
+        </ul>
+
+        <strong>Double Damage From:</strong>
+        <ul class="list-disc list-inside">
+            <% typeMatchups.double_damage_from.forEach(type => { %>
+                <li><%= type.name %></li>
+            <% }); %>
+        </ul>
+    </div>
 </div>
