@@ -1,14 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
+const pokemon = require('pokemon')
 
 const app = express();
 const port = 3000;
 
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const NASA_API_KEY = process.env.NASA_API_KEY;
-const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const BASE_URL = process.env.BASE_URL;
+const COINGECKO_API_BASE_URL = process.env.COINGECKO_API_BASE_URL;
+const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -17,7 +19,6 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
     res.render('index');
 });
-
 app.get('/joke', async (req, res) => {
     try {
         const jokeResponse = await axios.get('https://official-joke-api.appspot.com/random_joke');
@@ -29,35 +30,33 @@ app.get('/joke', async (req, res) => {
 });
 
 app.get('/weather', async (req, res) => {
-    const city = req.query.city || 'New York';
+    const city = req.query.city || 'Delhi';
     try {
-        const weatherResponse = await axios.get(`${BASE_URL}`);
 
-        const forecastResponse = await axios.get(`${BASE_URL}/forecast/daily`, {
+        const weatherResponse = await axios.get(`${BASE_URL}/weather`, {
             params: {
                 q: city,
                 appid: OPENWEATHERMAP_API_KEY,
-                units: 'metric',
-                cnt: 7
+                units: 'metric'
             }
         });
 
         const airQualityResponse = await axios.get(`${BASE_URL}/air_pollution`, {
             params: {
+                appid: OPENWEATHERMAP_API_KEY,
                 lat: weatherResponse.data.coord.lat,
                 lon: weatherResponse.data.coord.lon,
-                appid: OPENWEATHERMAP_API_KEY
             }
         });
 
         res.render('weather', {
             currentWeather: weatherResponse.data,
-            forecast: forecastResponse.data,
             airQuality: airQualityResponse.data
         });
     } catch (error) {
         console.log(error);
-        
+        console.log(OPENWEATHERMAP_API_KEY);
+        console.error('Error fetching weather data:', error.response ? error.response.data : error.message);
         console.error('Error fetching weather data:', error.message);
         res.render('error', { message: 'Failed to fetch weather data' });
     }
@@ -115,9 +114,9 @@ app.get('/space', async (req, res) => {
 });
 
 app.get('/pokemon', async (req, res) => {
-    const pokemon = req.query.name || 'pikachu';
+    const pokemon1 = pokemon.random();
     try {
-        const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`);
+        const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon1.toLowerCase()}`);
         const speciesResponse = await axios.get(pokemonResponse.data.species.url);
         const evolutionResponse = await axios.get(speciesResponse.data.evolution_chain.url);
 
@@ -141,9 +140,9 @@ app.get('/crypto', async (req, res) => {
     try {
         const cryptoResponse = await axios.get(`${COINGECKO_API_BASE_URL}/coins/markets`, {
             params: {
-                vs_currency: 'usd',
+                vs_currency: 'inr',
                 order: 'market_cap_desc',
-                per_page: 5,
+                per_page: 69,
                 page: 1,
                 sparkline: false
             }

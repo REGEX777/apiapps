@@ -15,8 +15,8 @@
                     <tr>
                         <td class="w-1/4 py-3 px-4"><%= crypto.name %></td>
                         <td class="w-1/4 py-3 px-4"><%= crypto.symbol.toUpperCase() %></td>
-                        <td class="w-1/4 py-3 px-4">$<%= crypto.current_price.toFixed(2) %></td>
-                        <td class="w-1/4 py-3 px-4">$<%= crypto.market_cap.toLocaleString() %></td>
+                        <td class="w-1/4 py-3 px-4">₹<%= crypto.current_price.toFixed(2) %></td>
+                        <td class="w-1/4 py-3 px-4">₹<%= crypto.market_cap.toLocaleString() %></td>
                     </tr>
                 <% }) %>
             </tbody>

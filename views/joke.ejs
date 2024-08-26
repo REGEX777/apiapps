@@ -1,8 +1,14 @@
 <%- include('partials/header', { title: 'jokes' }) %>
 
-<div class="text-center">
-    <p class="text-xl mb-4"><%= joke.setup %></p>
-    <p class="text-2xl font-semibold"><%= joke.punchline %></p>
+<div class="flex flex-col items-center h-screen items-center justify-center">
+    <p>Refresh for new jokes</p>
+    <div class="bg-gray-800 text-white p-6 rounded-lg shadow-lg text-center w-full max-w-md">
+        <p class="text-xl mb-4 font-medium"><%= joke.setup %></p>
+        <p class="text-2xl font-semibold text-yellow-400"><%= joke.punchline %></p>
+    </div>
+    <a href="/" class="mt-8 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">
+        Go back
+    </a>
 </div>
-<a href="/" class="mt-8 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">Go back</a>
-    <%- include('partials/footer') %>
+
+<%- include('partials/footer') %>
