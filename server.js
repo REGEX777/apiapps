@@ -8,6 +8,7 @@ const port = 3000;
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const NASA_API_KEY = process.env.NASA_API_KEY;
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
+const BASE_URL = process.env.BASE_URL;
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -30,13 +31,7 @@ app.get('/joke', async (req, res) => {
 app.get('/weather', async (req, res) => {
     const city = req.query.city || 'New York';
     try {
-        const weatherResponse = await axios.get(`${BASE_URL}/weather`, {
-            params: {
-                q: city,
-                appid: OPENWEATHERMAP_API_KEY,
-                units: 'metric'
-            }
-        });
+        const weatherResponse = await axios.get(`${BASE_URL}`);
 
         const forecastResponse = await axios.get(`${BASE_URL}/forecast/daily`, {
             params: {
@@ -61,6 +56,8 @@ app.get('/weather', async (req, res) => {
             airQuality: airQualityResponse.data
         });
     } catch (error) {
+        console.log(error);
+        
         console.error('Error fetching weather data:', error.message);
         res.render('error', { message: 'Failed to fetch weather data' });
     }
@@ -84,7 +81,7 @@ app.get('/dog-fact', async (req, res) => {
             axios.get('https://dog.ceo/api/breeds/image/random')
         ]);
 
-        res.render('dog-fact', {
+        res.render('dog-facts', {
             fact: factResponse.data.facts[0],
             imageUrl: imageResponse.data.message
         });
@@ -94,15 +91,6 @@ app.get('/dog-fact', async (req, res) => {
     }
 });
 
-app.get('/quote', async (req, res) => {
-    try {
-        const quoteResponse = await axios.get('https://api.quotable.io/random');
-        res.render('quote', { quote: quoteResponse.data });
-    } catch (error) {
-        console.error('Error fetching quote:', error);
-        res.render('error', { message: 'Failed to fetch quote' });
-    }
-});
 
 app.get('/space', async (req, res) => {
     try {
@@ -119,7 +107,6 @@ app.get('/space', async (req, res) => {
             apod: apod.data,
             spaceMissions: spaceMissions.data.launches
         });
-        console.log(apod.data);
         
     } catch (error) {
         console.error('Error fetching space data:', error);
