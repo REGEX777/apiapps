@@ -11,6 +11,8 @@ const NASA_API_KEY = process.env.NASA_API_KEY;
 const BASE_URL = process.env.BASE_URL;
 const COINGECKO_API_BASE_URL = process.env.COINGECKO_API_BASE_URL;
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
+
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -28,6 +30,29 @@ app.get('/joke', async (req, res) => {
         res.render('error', { message: 'Failed to fetch jokeee' });
     }
 });
+
+app.get('/movie', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.themoviedb.org/3/movie/popular', {
+            params: {
+                api_key: TMDB_API_KEY,
+                language: 'en-US',
+                page: 1
+            }
+        });
+
+        const randomIndex = Math.floor(Math.random() * response.data.results.length);
+        const movie = response.data.results[randomIndex];
+
+        res.render('movie', {
+            movie: movie
+        });
+    } catch (error) {
+        console.error('Error fetching movie suggestion:', error.message);
+        res.render('error', { message: 'Failed to fetch movie suggestion' });
+    }
+});
+
 
 app.get('/weather', async (req, res) => {
     const city = req.query.city || 'Delhi';
