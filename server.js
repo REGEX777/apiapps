@@ -91,6 +91,8 @@ app.get('/weather', async (req, res) => {
 app.get('/cat-facts', async (req, res) => {
     try {
         const catFactsResponse = await axios.get('https://catfact.ninja/fact');
+        const catImage = await axios.get('https://cataas.com/cat')
+        console.log(catImage)
         res.render('cat-facts', { catFact: catFactsResponse.data.fact });
     } catch (error) {
         console.error('Error fetching cat fact:', error);
