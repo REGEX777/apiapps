@@ -1,4 +1,5 @@
-<% layout('layout', { title: 'Random Dog Fact' }) %>
+<%- include('partials/header', { title: 'trivia' }) %>
+
 <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
     <h1 class="text-3xl font-bold mb-6 text-center">Trivia Game</h1>
     <form id="trivia-form">
@@ -26,3 +27,5 @@
         alert('Trivia submitted! Let\'s see how you did!');
     });
 </script>
+
+<%- include('partials/footer') %>

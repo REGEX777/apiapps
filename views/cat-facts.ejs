@@ -1,5 +1,6 @@
-<% layout('layout', { title: 'Random Cat Fact' }) %>
+<%- include('partials/header', { title: 'Home' }) %>
 <div class="text-center">
     <p class="text-xl mb-4"><%= catFact %></p>
 </div>
 <a href="/" class="mt-8 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">Go back</a>
+<%- include('partials/footer') %>

@@ -1,6 +1,6 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
-require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -8,12 +8,14 @@ const port = 3000;
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const NASA_API_KEY = process.env.NASA_API_KEY;
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
-const COINGECKO_API_BASE_URL = 'https://api.coingecko.com/api/v3';
-const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+    res.render('index');
+});
 
 app.get('/joke', async (req, res) => {
     try {
@@ -21,7 +23,7 @@ app.get('/joke', async (req, res) => {
         res.render('joke', { joke: jokeResponse.data });
     } catch (error) {
         console.error('Error fetching joke:', error);
-        res.render('error', { message: 'Failed to fetch joke' });
+        res.render('error', { message: 'Failed to fetch jokeee' });
     }
 });
 
@@ -59,10 +61,11 @@ app.get('/weather', async (req, res) => {
             airQuality: airQualityResponse.data
         });
     } catch (error) {
-        console.error('Error fetching weather data:', error);
+        console.error('Error fetching weather data:', error.message);
         res.render('error', { message: 'Failed to fetch weather data' });
     }
 });
+
 
 app.get('/cat-facts', async (req, res) => {
     try {
@@ -76,8 +79,10 @@ app.get('/cat-facts', async (req, res) => {
 
 app.get('/dog-fact', async (req, res) => {
     try {
-        const factResponse = await axios.get('https://dog-api.kinduff.com/api/facts');
-        const imageResponse = await axios.get('https://dog.ceo/api/breeds/image/random');
+        const [factResponse, imageResponse] = await Promise.all([
+            axios.get('https://dog-api.kinduff.com/api/facts'),
+            axios.get('https://dog.ceo/api/breeds/image/random')
+        ]);
 
         res.render('dog-fact', {
             fact: factResponse.data.facts[0],
@@ -94,25 +99,31 @@ app.get('/quote', async (req, res) => {
         const quoteResponse = await axios.get('https://api.quotable.io/random');
         res.render('quote', { quote: quoteResponse.data });
     } catch (error) {
+        console.error('Error fetching quote:', error);
         res.render('error', { message: 'Failed to fetch quote' });
     }
 });
 
 app.get('/space', async (req, res) => {
     try {
-        const marsWeather = await axios.get(`https://api.nasa.gov/insight_weather/?api_key=${NASA_API_KEY}&feedtype=json&ver=1.0`);
-        const neos = await axios.get(`https://api.nasa.gov/neo/rest/v1/feed/today?detailed=true&api_key=${NASA_API_KEY}`);
-        const apod = await axios.get(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
-        const spaceMissions = await axios.get(`https://launchlibrary.net/1.4/launch/next/10`);
+        const [marsWeather, neos, apod, spaceMissions] = await Promise.all([
+            axios.get(`https://api.nasa.gov/insight_weather/?api_key=${NASA_API_KEY}&feedtype=json&ver=1.0`),
+            axios.get(`https://api.nasa.gov/neo/rest/v1/feed/today?detailed=true&api_key=${NASA_API_KEY}`),
+            axios.get(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`),
+            axios.get(`https://launchlibrary.net/1.4/launch/next/10`)
+        ]);
 
-        res.render('dashboard', {
+        res.render('space', {
             marsWeather: marsWeather.data,
             neos: neos.data.near_earth_objects,
             apod: apod.data,
             spaceMissions: spaceMissions.data.launches
         });
+        console.log(apod.data);
+        
     } catch (error) {
-        res.render('error', { message: 'Failed to fetch data' });
+        console.error('Error fetching space data:', error);
+        res.render('error', { message: 'Failed to fetch space data' });
     }
 });
 
@@ -163,7 +174,6 @@ app.get('/crypto', async (req, res) => {
 app.get('/trivia', async (req, res) => {
     try {
         const triviaResponse = await axios.get('https://opentdb.com/api.php?amount=10&type=multiple');
-
         res.render('trivia', {
             questions: triviaResponse.data.results
         });
@@ -172,8 +182,6 @@ app.get('/trivia', async (req, res) => {
         res.render('error', { message: 'Failed to fetch trivia questions' });
     }
 });
-
-
 
 app.get('/news', async (req, res) => {
     const query = req.query.q || 'technology';

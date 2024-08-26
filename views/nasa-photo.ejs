@@ -1,7 +1,8 @@
-<% layout('layout', { title: 'NASA Picture of the Day' }) %>
+<%- include('partials/header', { title: 'nasa' }) %>
 <div class="text-center">
     <h2 class="text-2xl mb-4 font-bold"><%= photo.title %></h2>
     <img src="<%= photo.url %>" alt="NASA Photo" class="w-full rounded-lg mb-4">
     <p class="text-xl"><%= photo.explanation %></p>
 </div>
 <a href="/" class="mt-8 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">Go back</a>
+<%- include('partials/footer') %>

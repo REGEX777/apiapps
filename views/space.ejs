@@ -1,53 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('partials/head') %>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
-    <div class="container mx-auto p-8">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-7xl mx-auto">
-            <h1 class="text-4xl font-extrabold text-center mb-8">Space Mission Dashboard</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- mars weathr section -->
-                <div class="bg-gray-700 p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4">Mars Weather</h2>
-                    <p>Sol: <%= marsWeather.sol_keys[0] %></p>
-                    <p>Temperature: <%= marsWeather[sol_keys[0]].AT.av %>°C</p>
-                    <p>Wind Speed: <%= marsWeather[sol_keys[0]].HWS.av %> m/s</p>
-                    <p>Pressure: <%= marsWeather[sol_keys[0]].PRE.av %> Pa</p>
-                </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.1/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white">
+    <header class="bg-gray-800 p-4">
+        <h1 class="text-2xl font-bold">Space Data</h1>
+    </header>
 
-                <!-- Objects near earth section -->
-                <div class="bg-gray-700 p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4">Near-Earth Objects</h2>
-                    <% neos.forEach(neo => { %>
-                        <div class="mb-4">
-                            <p>Name: <%= neo.name %></p>
-                            <p>Hazardous: <%= neo.is_potentially_hazardous_asteroid ? 'Yes' : 'No' %></p>
-                            <p>Distance: <%= neo.close_approach_data[0].miss_distance.kilometers %> km</p>
-                        </div>
-                    <% }) %>
-                </div>
+    <main class="p-6">
+        <!-- MARS WEATHER STUFF -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold">Mars Weather</h2>
+            <% if (marsWeather && marsWeather.sol_keys && marsWeather.sol_keys.length > 0) { %>
+                <% const latestSol = marsWeather.sol_keys[0]; %>
+                <% const latestWeather = marsWeather[latestSol]; %>
+                <% if (latestWeather) { %>
+                    <div>
+                        <p><strong>Season:</strong> <%= marsWeather.season %></p>
+                        <p><strong>Temperature:</strong> <%= latestSol %> Sols</p>
+                        <p><strong>Average Temperature:</strong> <%= latestWeather.AT && latestWeather.AT.av ? latestWeather.AT.av : 'N/A' %> °C</p>
+                        <p><strong>Wind Speed:</strong> <%= latestWeather.WD && latestWeather.WD.most_common ? latestWeather.WD.most_common.compass_point : 'N/A' %> at <%= latestWeather.WD && latestWeather.WD.most_common ? latestWeather.WD.most_common.ordinal : 'N/A' %> °</p>
+                    </div>
+                <% } else { %>
+                    <p>No weather data available for the latest sol.</p>
+                <% } %>
+            <% } else { %>
+                <p>No Mars weather data available.</p>
+            <% } %>
+        </section>
 
-                <!-- APOD section -->
-                <div class="bg-gray-700 p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4">Astronomy Picture of the Day</h2>
-                    <img src="<%= apod.url %>" alt="APOD" class="w-full h-auto rounded mb-4">
-                    <p><%= apod.title %></p>
-                    <p><%= apod.explanation %></p>
-                </div>
+        <!-- NEAR-EARTH OBJECTS SHENANIGANS -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold">Near-Earth Objects</h2>
+            <% if (neos && Object.keys(neos).length > 0) { %>
+                <ul>
+                    <% for (let date in neos) { %>
+                        <% neos[date].forEach(neo => { %>
+                            <li class="mb-4">
+                                <p><strong>Name:</strong> <%= neo.name %></p>
+                                <p><strong>Diameter:</strong> <%= neo.estimated_diameter.kilometers.estimated_diameter_max %> km</p>
+                                <p><strong>Close Approach Date:</strong> <%= neo.close_approach_data[0].close_approach_date %></p>
+                                <hr class="my-2 border-gray-600">
+                            </li>
+                        <% }); %>
+                    <% } %>
+                </ul>
+            <% } else { %>
+                <p>No near-Earth object data available.</p>
+            <% } %>
+        </section>
 
-                <!-- space missions Section -->
-                <div class="bg-gray-700 p-6 rounded-lg shadow md:col-span-2">
-                    <h2 class="text-2xl font-bold mb-4">Upcoming Space Missions</h2>
+        <!-- APOD (ASTRONOMY PICTURE OF THE DAY) -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold">Astronomy Picture of the Day (APOD)</h2>
+            <% if (apod) { %>
+                <div>
+                    <h3 class="text-lg font-medium"><%= apod.title %></h3>
+                    <img src="<%= apod.url %>" alt="<%= apod.title %>" class="w-full h-auto my-2">
+                    <p><strong>Date:</strong> <%= apod.date %></p>
+                    <p><strong>Description:</strong> <%= apod.explanation %></p>
+                </div>
+            <% } else { %>
+                <p>No Astronomy Picture of the Day data available.</p>
+            <% } %>
+        </section>
+
+        <!-- UPCOMING SPACE MISSIONS -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold">Upcoming Space Missions</h2>
+            <% if (spaceMissions && spaceMissions.length > 0) { %>
+                <ul>
                     <% spaceMissions.forEach(mission => { %>
-                        <div class="mb-4">
-                            <p>Name: <%= mission.name %></p>
-                            <p>Window Start: <%= mission.windowstart %></p>
-                            <p>Location: <%= mission.location.name %></p>
-                        </div>
-                    <% }) %>
-                </div>
-            </div>
-        </div>
-    </div>
+                        <li class="mb-4">
+                            <p><strong>Mission Name:</strong> <%= mission.name %></p>
+                            <p><strong>Launch Date:</strong> <%= new Date(mission.net).toLocaleDateString() %></p>
+                            <p><strong>Rocket:</strong> <%= mission.rocket.name %></p>
+                            <hr class="my-2 border-gray-600">
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No upcoming space missions data available.</p>
+            <% } %>
+        </section>
+    </main>
 </body>
 </html>
